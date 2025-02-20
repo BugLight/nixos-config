@@ -1,29 +1,103 @@
 {
+  description = "buglight's home and os config";
+
+  nixConfig = {
+    experimental-features = [
+      "flakes"
+      "nix-command"
+    ];
+  };
+
   inputs = {
     # NixOS official package source, using the nixos-24.11 branch here
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";    
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+
+    # NixOs latest unstable packages
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # home-manager, used for managing user configuration
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # The Uncompromising Nix Code Formatter
+    alejandra = {
+      url = "github:kamadorueda/alejandra/3.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Other non-flake inputs
+
+    my-nvim-config = {
+      url = "github:buglight/my-nvim-config";
+      flake = false;
+    };
+
+    powerlevel10k = {
+      url = "github:romkatv/powerlevel10k";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations.liskov = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-	
-        home-manager.nixosModules.home-manager
+  outputs = {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    home-manager,
+    alejandra,
+    ...
+  } @ inputs: let
+    genSpecialArgs = {system, ...} @ vars:
+      inputs
+      // {
+        inherit vars;
+
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        pkgs-unstable = import nixpkgs-unstable {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        alejandra = alejandra.defaultPackage.${system};
+      };
+
+    nixosConfig = {
+      username,
+      hostname,
+      system,
+      ...
+    } @ vars: let
+      specialArgs = genSpecialArgs vars;
+    in
+      nixpkgs.lib.nixosSystem {
+        inherit specialArgs system;
+
+        modules = [
+          ./hosts/${hostname}/configuration.nix
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
+            home-manager.users.${username} = import ./hosts/${hostname}/home.nix;
+          }
+        ];
+      };
+  in {
+    nixosConfigurations = {
+      liskov =
+        nixosConfig
         {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          
-          home-manager.users.buglight = import ./home.nix;
-        }
-      ];
+          system = "x86_64-linux";
+          username = "buglight";
+          hostname = "liskov";
+          email = "dmzhukov@outlook.com";
+          fullname = "Dani Zhukov";
+        };
     };
   };
 }

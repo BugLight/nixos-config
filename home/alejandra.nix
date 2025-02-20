@@ -1,0 +1,3 @@
+{alejandra, ...}: {
+  home.packages = [alejandra];
+}

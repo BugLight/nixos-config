@@ -1,0 +1,1 @@
+exec "wlgreet --command sway; swaymsg exit"
