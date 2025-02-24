@@ -87,6 +87,19 @@
           }
         ];
       };
+
+    homeConfig = {hostname, ...} @ vars: let
+      specialArgs = genSpecialArgs vars;
+    in
+      home-manager.lib.homeManagerConfiguration
+      {
+        pkgs = specialArgs.pkgs;
+        extraSpecialArgs = specialArgs;
+
+        modules = [
+          ./hosts/${hostname}/home.nix
+        ];
+      };
   in {
     nixosConfigurations = {
       liskov =
@@ -95,6 +108,18 @@
           system = "x86_64-linux";
           username = "buglight";
           hostname = "liskov";
+          email = "dmzhukov@outlook.com";
+          fullname = "Dani Zhukov";
+        };
+    };
+
+    homeConfigurations = {
+      "zhukovdan@i113734722" =
+        homeConfig
+        {
+          system = "aarch64-darwin";
+          username = "zhukovdan";
+          hostname = "i113734722";
           email = "dmzhukov@outlook.com";
           fullname = "Dani Zhukov";
         };
