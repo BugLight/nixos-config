@@ -11,6 +11,7 @@
     ripgrep # recursively searches directories for a regex pattern
     jq # A lightweight and flexible command-line JSON processor
     fzf # A command-line fuzzy finder
+    fd # Simple, fast and user-friendly alternative to find
 
     # networking tools
     dnsutils # `dig` + `nslookup`

@@ -30,7 +30,7 @@
     # Other non-flake inputs
 
     my-nvim-config = {
-      url = "github:buglight/my-nvim-config";
+      url = "github:buglight/my-nvim-config/snacks-config";
       flake = false;
     };
 
