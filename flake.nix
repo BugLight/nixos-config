@@ -1,13 +1,6 @@
 {
   description = "buglight's home and os config";
 
-  nixConfig = {
-    experimental-features = [
-      "flakes"
-      "nix-command"
-    ];
-  };
-
   inputs = {
     # NixOS official package source, using the nixos-24.11 branch here
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -27,12 +20,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Other non-flake inputs
-
     my-nvim-config = {
-      url = "github:buglight/my-nvim-config/snacks-config";
-      flake = false;
+      url = "github:buglight/my-nvim-config";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Other non-flake inputs
 
     powerlevel10k = {
       url = "github:romkatv/powerlevel10k";
@@ -46,6 +39,7 @@
     nixpkgs-unstable,
     home-manager,
     alejandra,
+    my-nvim-config,
     ...
   } @ inputs: let
     genSpecialArgs = {system, ...} @ vars:
@@ -62,6 +56,7 @@
           config.allowUnfree = true;
         };
         alejandra = alejandra.defaultPackage.${system};
+        my-nvim-config = my-nvim-config.packages.${system}.default;
       };
 
     nixosConfig = {

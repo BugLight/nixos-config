@@ -1,14 +1,19 @@
 {
   pkgs-unstable,
   my-nvim-config,
+  system,
   ...
 }: {
-  home.packages = [pkgs-unstable.neovim];
-
-  home.file.my-nvim-config = {
-    source = my-nvim-config;
-    target = ".config/nvim";
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    extraWrapperArgs = [
+      "--set"
+      "XDG_CONFIG_HOME"
+      "${my-nvim-config.outPath}"
+      "--set"
+      "NVIM_APPNAME"
+      "my-nvim-config"
+    ];
   };
-
-  home.sessionVariables.EDITOR = "nvim";
 }

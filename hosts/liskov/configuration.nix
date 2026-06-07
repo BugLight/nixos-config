@@ -5,12 +5,22 @@
 }: {
   imports = [
     ../../modules/nvidia.nix
+    ../../modules/steam.nix
     ../../modules/sway
     ../../modules/system.nix
 
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
+
+  environment.systemPackages = with pkgs; [
+    prismlauncher
+    vesktop
+  ];
+
+  hardware.bluetooth.enable = true;
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
