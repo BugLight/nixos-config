@@ -108,16 +108,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1780762185,
-        "narHash": "sha256-t3VeY5/9AplGITTz9HvsLC6NV15MuDQ2xuxB7jEKdzo=",
+        "lastModified": 1780816636,
+        "narHash": "sha256-VkYQf0Ih8Wx89DAPQIl2nNHtwTft+sLKrpiHr4/lHOI=",
         "owner": "buglight",
         "repo": "my-nvim-config",
-        "rev": "f3b56e043ff010c77659432eecf78ddcd6dadc36",
+        "rev": "2b5e57b8978bb2ea3f8722f95ea394b91cf07e90",
         "type": "github"
       },
       "original": {
         "owner": "buglight",
-        "ref": "snacks-config",
         "repo": "my-nvim-config",
         "type": "github"
       }

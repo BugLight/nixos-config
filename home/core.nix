@@ -46,7 +46,7 @@
           mkdir -p "$app_target"
           ${pkgs.rsync}/bin/rsync $rsyncArgs "$apps_source/" "$app_target"
         ''
-      else null;
+      else "";
   };
 
   # Let home Manager install and manage itself.
