@@ -1,6 +1,7 @@
 {lib, ...}: let
   nixModule = {pkgs, ...}: {
-    nix.package = pkgs.nix;
+    nix.package = lib.mkDefault pkgs.nix;
+
     # Enable nix flakes support
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
