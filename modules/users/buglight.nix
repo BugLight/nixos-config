@@ -16,6 +16,7 @@
       firefox
       ghostty
       neovim
+      noctalia
       zsh
     ];
   };

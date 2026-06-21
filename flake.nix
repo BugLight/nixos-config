@@ -23,6 +23,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # A beautiful, minimal desktop shell for Wayland
+    noctalia = {
+      url = "github:noctalia-dev/noctalia/legacy-v4";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # The Uncompromising Nix Code Formatter
     alejandra = {
       url = "github:kamadorueda/alejandra/3.1.0";
