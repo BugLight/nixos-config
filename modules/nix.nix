@@ -1,16 +1,17 @@
 {lib, ...}: let
-  nix = {
+  nixModule = {pkgs, ...}: {
+    nix.package = pkgs.nix;
     # Enable nix flakes support
-    settings.experimental-features = ["nix-command" "flakes"];
+    nix.settings.experimental-features = ["nix-command" "flakes"];
 
     # Do garbage collection weekly to keep disk usage low
-    gc = {
+    nix.gc = {
       automatic = lib.mkDefault true;
       dates = lib.mkDefault "weekly";
       options = lib.mkDefault "--delete-older-than 7d";
     };
   };
 in {
-  flake.modules.nixos.base = {inherit nix;};
-  flake.modules.homeManager.base = {inherit nix;};
+  flake.modules.nixos.base = nixModule;
+  flake.modules.homeManager.base = nixModule;
 }

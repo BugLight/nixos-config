@@ -4,6 +4,7 @@
       firefox
       kitty
       neovim
+      zsh
     ];
   };
 }

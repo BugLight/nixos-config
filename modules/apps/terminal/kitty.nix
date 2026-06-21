@@ -8,6 +8,8 @@
         size = 16;
       };
 
+      themeFile = "mellow";
+
       settings = {
         background_opacity = "0.75";
         background_blur = 10;

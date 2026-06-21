@@ -13,6 +13,7 @@
   };
 
   config.flake.modules.homeManager.base = {
+    config,
     pkgs,
     system,
     username,
@@ -43,7 +44,7 @@
       activation.rsync-home-manager-applications =
         if isDarwin
         then
-          lib.hm.dag.entryAfter ["writeBoundary"] ''
+          inputs.home-manager.lib.hm.dag.entryAfter ["writeBoundary"] ''
             rsyncArgs="--archive --checksum --chmod=-w --copy-unsafe-links --delete"
             apps_source="$genProfilePath/home-path/Applications"
             moniker="Home Manager Trampolines"
