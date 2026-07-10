@@ -46,6 +46,8 @@
         XF86AudioRaiseVolume = "exec noctalia msg volume-up";
         XF86AudioLowerVolume = "exec noctalia msg volume-down";
         XF86AudioMute = "exec noctalia msg volume-mute";
+        "Ctrl+Shift+3" = "exec noctalia msg screenshot-fullscreen";
+        "Ctrl+Shift+4" = "exec noctalia msg screenshot-region";
       };
 
       menu = "noctalia msg panel-open launcher";
