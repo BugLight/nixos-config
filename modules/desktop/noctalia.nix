@@ -1,4 +1,8 @@
-{inputs, lib, ...}: {
+{
+  inputs,
+  lib,
+  ...
+}: {
   flake.modules.homeManager.noctalia = {
     config,
     pkgs,
@@ -10,40 +14,43 @@
     ];
 
     # configure options
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
-      plugins = {
-        sources = [
-          {
-            enabled = true;
-            name = "Official Noctalia Plugins";
-            url = "https://github.com/noctalia-dev/noctalia-plugins";
-          }
-        ];
-        states = {
-          dmenu = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
+      settings = {
+        theme = {
+          mode = "dark";
+          source = "wallpaper";
+          wallpaper_scheme = "muted";
         };
-        version = 2;
+        wallpaper = {
+          enabled = true;
+          default.path = ./sway/wallpaper.png;
+        };
       };
     };
 
     # configure wayland compositor
     wayland.windowManager.sway.config = {
       bars = lib.mkForce [];
+
       startup = [
-        {command = "noctalia-shell";}
+        {
+          command = "noctalia";
+          always = true;
+        }
       ];
 
-      menu = let
-        noctalia-dmenu = "${config.home.homeDirectory}/.config/noctalia/plugins/dmenu/noctalia-dmenu";
-      in ''
-        ${pkgs.dmenu}/bin/dmenu_path \
-        | ${noctalia-dmenu} \
-        | ${pkgs.findutils}/bin/xargs swaymsg exec --
-      '';
+      keybindings = lib.mkOptionDefault {
+        XF86MonBrightnessUp = "exec noctalia msg brightness-up";
+        XF86MonBrightnessDown = "exec noctalia msg brightness-down";
+        XF86AudioRaiseVolume = "exec noctalia msg volume-up";
+        XF86AudioLowerVolume = "exec noctalia msg volume-down";
+        XF86AudioMute = "exec noctalia msg volume-mute";
+      };
+
+      menu = "noctalia msg panel-open launcher";
+
+      window.titlebar = false;
     };
   };
 }

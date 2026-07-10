@@ -39,6 +39,33 @@
         defaultWorkspace = "1";
         modifier = "Mod4";
 
+        colors.unfocused = {
+          border = "#333333";
+          childBorder = "#222222";
+          background = "#222222";
+          text = "#9a9a9a";
+          indicator = "#333333";
+        };
+
+        colors.focused = {
+          border = "#333333";
+          childBorder = "#333333";
+          background = "#353535";
+          text = "#ffffff";
+          indicator = "#333333";
+        };
+
+        colors.focusedInactive = {
+          border = "#333333";
+          childBorder = "#9a9a9a";
+          background = "#9a9a9a";
+          text = "#ffffff";
+          indicator = "#333333";
+        };
+
+        gaps.inner = 10;
+        gaps.outer = 5;
+
         input = {
           "type:keyboard" = {
             xkb_layout = "us,ru";
@@ -51,15 +78,6 @@
         fonts = {
           names = ["FiraCode Nerd Font Mono"];
           size = 13.0;
-        };
-
-        keybindings = lib.mkOptionDefault {
-          XF86MonBrightnessDown = "exec light -U 10";
-          XF86MonBrightnessUp = "exec light -A 10";
-
-          XF86AudioRaiseVolume = "exec 'pactl set-sink-volume @DEFAULT_SINK@ +5%'";
-          XF86AudioLowerVolume = "exec 'pactl set-sink-volume @DEFAULT_SINK@ -5%'";
-          XF86AudioMute = "exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'";
         };
       };
     };
