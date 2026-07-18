@@ -21,6 +21,8 @@
         font-size = 18;
 
         theme = "mellow";
+
+        shell-integration-features = "sudo,ssh-terminfo,ssh-env";
       };
     };
 

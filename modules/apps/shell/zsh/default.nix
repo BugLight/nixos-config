@@ -28,6 +28,7 @@
           "isodate"
           "pip"
           "safe-paste"
+          "ssh"
           "zsh-interactive-cd"
         ];
       };

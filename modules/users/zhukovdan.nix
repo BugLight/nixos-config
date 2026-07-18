@@ -4,8 +4,9 @@
       firefox
       ghostty
       neovim
-      zsh
+      ssh
       tmux
+      zsh
     ];
   };
 }
