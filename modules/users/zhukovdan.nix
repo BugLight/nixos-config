@@ -5,6 +5,7 @@
       kitty
       neovim
       zsh
+      tmux
     ];
   };
 }

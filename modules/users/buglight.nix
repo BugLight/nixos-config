@@ -17,6 +17,7 @@
       ghostty
       neovim
       noctalia
+      tmux
       zsh
     ];
   };
