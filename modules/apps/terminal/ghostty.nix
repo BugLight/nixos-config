@@ -1,15 +1,29 @@
-{
-  flake.modules.homeManager.ghostty = {pkgs, ...}: {
-    home.packages = [pkgs.ghostty];
+{lib, ...}: {
+  flake.modules.homeManager.ghostty = {
+    pkgs,
+    system,
+    ...
+  }: let
+    isDarwin = lib.strings.hasSuffix "darwin" system;
+    ghosttyPackage =
+      if isDarwin
+      then pkgs.ghostty-bin
+      else pkgs.ghostty;
+  in {
+    programs.ghostty = {
+      enable = true;
+      package = ghosttyPackage;
+      settings = {
+        background-opacity = 0.75;
+        background-blur = true;
 
-    home.file.".config/ghostty/config".text = ''
-      font-family = FiraCode Nerd Font Mono
-      font-size = 16
+        font-family = "FiraCode Nerd Font Mono";
+        font-size = 18;
 
-      background-opacity = 0.75
-      background-blur = true
-    '';
+        theme = "mellow";
+      };
+    };
 
-    terminal.package = pkgs.ghostty;
+    terminal.package = ghosttyPackage;
   };
 }

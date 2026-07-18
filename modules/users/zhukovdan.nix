@@ -2,7 +2,7 @@
   homeConfigurations.zhukovdan = {
     imports = with inputs.self.modules.homeManager; [
       firefox
-      kitty
+      ghostty
       neovim
       zsh
       tmux
