@@ -9,8 +9,9 @@
 
       autosuggestion.enable = true;
       enableVteIntegration = true;
+      syntaxHighlighting.enable = true;
 
-      initExtra = ''
+      initContent = ''
         [[ ! -f ${./p10k.zsh} ]] || source ${./p10k.zsh}
       '';
 
@@ -21,8 +22,13 @@
         theme = "powerlevel10k/powerlevel10k";
 
         plugins = [
+          "fancy-ctrl-z"
+          "fzf"
           "git"
-          "sudo"
+          "isodate"
+          "pip"
+          "safe-paste"
+          "zsh-interactive-cd"
         ];
       };
     };
