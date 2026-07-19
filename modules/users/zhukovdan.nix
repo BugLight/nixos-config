@@ -4,6 +4,7 @@
       firefox
       ghostty
       neovim
+      opencode
       ssh
       tmux
       zsh
