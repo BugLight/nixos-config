@@ -33,6 +33,7 @@
       stateVersion = "24.11";
 
       inherit username;
+      sessionPath = ["${config.home.profileDirectory}/bin"];
       homeDirectory = let
         homeDirectoryPrefix =
           if isDarwin
