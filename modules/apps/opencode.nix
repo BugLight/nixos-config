@@ -1,7 +1,6 @@
 let
   cloudModel = "openai/gpt-5.6-sol";
-  longContextModel = "openai/gpt-5.6-luna";
-  localModel = "ollama/qwen3.5:9b";
+  subagentModel = "openai/gpt-5.6-luna";
 in {
   flake.modules.homeManager.opencode = {
     programs.opencode = {
@@ -10,45 +9,84 @@ in {
       context = ''
         # Subagent delegation
 
-        These rules apply when you are the primary `build` or `plan` agent. If you
-        are running as a subagent, complete only the assigned task and do not
-        delegate further.
+        Routing and request rules apply to the primary `build` and `plan` agents.
+        Execution, response, and handoff rules apply to subagents. Subagents must
+        complete only the assigned task and must not delegate further.
 
-        Use the local-model subagents proactively when they can reduce latency or
-        cloud-model usage without compromising correctness:
+        The primary agent should complete narrow serial work directly. Do not
+        delegate a single localized change, one routine command, a linear trace
+        through a small known scope, narrow verification, or one coherent external
+        lookup. Delegation overhead is unlikely to pay off for these tasks.
 
-        - Use `explore` for focused, read-only codebase searches, locating symbols,
-          tracing straightforward behavior, and gathering context.
-        - Use `scout` for external documentation, upstream source, and dependency
-          research. Prefer official documentation and primary sources.
-        - Use `quick` for small, well-scoped tasks with an obvious implementation,
-          such as localized edits, routine commands, or narrow verification.
+        Delegate only when at least one of these conditions holds:
 
-        If a local-model subagent's task exceeds its available context window, or
-        it can no longer retain enough context to finish reliably, it must stop and
-        return a concise handoff to the primary agent. Include completed work, key
-        findings, exact files or sources, and the remaining work. Do not guess or
-        continue with incomplete context.
+        - Two or more independent workstreams can run in parallel.
+        - Local investigation is broad across unknown modules and a compressed
+          evidence report avoids loading substantial irrelevant context into the
+          primary session.
+        - External research spans independent questions or a broad source set and
+          can run in parallel with local work.
+        - A bounded implementation or verification is independent of the primary
+          agent's current critical path.
 
-        Use the `long-context` subagent only for read-only investigations expected
-        to exceed roughly 20,000 tokens of source and tool output, broad synthesis
-        across a repository and its dependencies, or after a local agent reports
-        that its context is insufficient. Do not use it for routine tasks.
+        Use `explore` for broad, read-only local investigation, `scout` for broad or
+        parallel external research, and `quick` for independent bounded execution.
+        Keep ambiguous requirements, architecture or security decisions, broad
+        refactors, and final integration in the primary agent.
 
-        The `build` agent may delegate to `explore`, `scout`, `quick`, and
-        `long-context`. The `plan` agent may delegate only to the read-only
-        `explore`, `scout`, and `long-context` agents and must not use a subagent
-        to modify files or system state.
+        The `build` agent may delegate to `explore`, `scout`, and `quick`. The
+        `plan` agent may delegate only to the read-only `explore` and `scout`
+        agents and must not use a subagent to modify files or system state.
 
-        Delegate independent tasks in parallel. Give every subagent a precise scope,
-        relevant paths and constraints, the expected result, and a verification step.
-        Do not duplicate delegated work while it is in progress; continue only with
-        non-overlapping work and integrate the returned result.
+        Delegate independent tasks in parallel. Never duplicate delegated work while
+        it is in progress; continue only with non-overlapping work.
 
-        Keep complex architecture, ambiguous requirements, security-sensitive work,
-        broad refactors, and final decisions in the primary agent. The primary agent
-        remains responsible for reviewing subagent output, resolving conflicts,
-        running appropriate final checks, and delivering the complete result.
+        Every delegated request must use this format:
+
+        ```text
+        Goal: One observable outcome.
+        Scope: Exact files, symbols, sources, or questions in bounds.
+        Context: Relevant facts, assumptions, and prior work; do not repeat it.
+        Constraints: Read/write boundary, allowed tools, and explicit exclusions.
+        Deliverable: Exact output or change expected.
+        Verification: Checks to run and what counts as success.
+        Dependencies: Why the task is independent or what must complete first.
+        Stop conditions: Conditions that require stopping and returning a handoff.
+        ```
+
+        Do not delegate until `Goal`, `Scope`, and `Deliverable` are concrete. Include
+        all fields; write `none` only when a field genuinely does not apply.
+
+        Every subagent response must use this format:
+
+        ```text
+        Status: completed | blocked | handoff
+        Summary: Concise result.
+        Evidence: Observed facts with exact files, symbols, lines, or URLs; identify
+          inferred or unverified claims explicitly.
+        Changes: Exact paths and modifications, or `none` for read-only work.
+        Verification: Checks run and results; list anything not verified.
+        Risks: Residual risks, uncertainty, or conflicting evidence; otherwise `none`.
+        Handoff: Reason, completed work, evidence, remaining work, required decision
+          or capability, and exact next action; otherwise `none`.
+        ```
+
+        `completed` means the deliverable and required verification are satisfied.
+        Use `blocked` when an unavailable tool, source, permission, or environment
+        prevents progress within scope. Return `handoff` when completion requires
+        expanding scope, making an architecture or security decision, resolving
+        material requirement ambiguity, exceeding permissions, or performing
+        required work outside the assigned boundary. Continue investigating factual
+        uncertainty when allowed tools can resolve it. Never guess, silently expand
+        scope, or claim verification that was not performed.
+
+        For a `completed` report, validate that its status, evidence, changes,
+        verification, and risks are internally consistent. Run at most one decisive
+        acceptance check when the task has an executable outcome. Do not repeat the
+        same searches, source reads, or implementation. Resume the same child session
+        only when evidence is missing, contradictory, or fails the acceptance check.
+        The primary agent remains responsible for conflict resolution, final
+        integration, and the user-facing result.
       '';
 
       settings = {
@@ -68,7 +106,7 @@ in {
           };
         };
 
-        provider.openai.models."gpt-5.6-luna".variants.long-context = {
+        provider.openai.models."gpt-5.6-luna".variants.subagent = {
           reasoningEffort = "low";
           textVerbosity = "low";
           reasoningSummary = "auto";
@@ -93,7 +131,7 @@ in {
         };
 
         model = cloudModel;
-        small_model = localModel;
+        small_model = subagentModel;
 
         compaction = {
           auto = true;
@@ -112,7 +150,6 @@ in {
             permission.task = {
               "*" = "deny";
               explore = "allow";
-              long-context = "allow";
               quick = "allow";
               scout = "allow";
             };
@@ -124,32 +161,38 @@ in {
             permission.task = {
               "*" = "deny";
               explore = "allow";
-              long-context = "allow";
               scout = "allow";
             };
           };
 
           explore = {
-            model = localModel;
-            temperature = 0.7;
-            top_p = 0.8;
-            options.reasoningEffort = "none";
+            model = subagentModel;
+            variant = "subagent";
+            description = "Performs focused, read-only searches and traces behavior in the local codebase.";
+            prompt = ''
+              Investigate only the assigned local codebase scope without modifying files or
+              system state or researching external sources. Prefer targeted searches and reads.
+              Return exact paths, symbols, and relevant line ranges. Resolve factual uncertainty
+              with allowed tools, but hand off decisions or work outside the assigned boundary.
+              Follow the shared request, response, and handoff contract exactly. Do not delegate
+              further.
+            '';
           };
 
           general.disable = true;
 
           quick = {
             mode = "subagent";
-            model = localModel;
-            description = "Handles small, well-scoped tasks with an obvious implementation.";
+            model = subagentModel;
+            variant = "subagent";
+            description = "Implements small, well-scoped changes or runs narrow verification with an obvious solution.";
             prompt = ''
-              Handle only simple, well-scoped tasks. Make the smallest correct change and
-              verify it when practical. If the task is ambiguous, risky, or requires broad
-              architectural reasoning, report that it should be handled by the primary agent.
+              Complete only the bounded implementation, command, or verification listed in
+              `Scope`. Make the smallest correct change and run the requested checks. Do not
+              redesign architecture or fix adjacent issues. Resolve failures inside `Scope`;
+              hand off immediately if completion requires materially broader work. Follow the
+              shared request, response, and handoff contract exactly. Do not delegate further.
             '';
-            temperature = 0.7;
-            top_p = 0.8;
-            options.reasoningEffort = "none";
             permission = {
               task = "deny";
               todowrite = "deny";
@@ -158,44 +201,20 @@ in {
 
           scout = {
             mode = "subagent";
-            model = localModel;
-            description = "Researches external documentation, upstream source, and dependencies.";
+            model = subagentModel;
+            variant = "subagent";
+            description = "Researches external documentation, upstream source, APIs, and dependencies using primary sources.";
             prompt = ''
-              Research external documentation, upstream source code, and dependencies without
-              modifying the active workspace. Prefer official documentation and primary sources.
-              Use web tools first. Use shell commands only when needed to inspect dependency source,
-              and clone repositories only into a temporary or OpenCode-managed cache directory.
-              Return concise findings with source URLs, relevant versions, and any uncertainty.
-              Complete only the assigned research task and do not delegate further.
+              Research only the assigned external question without modifying files or system
+              state. Prefer official documentation and primary sources. Read the relevant passage
+              and verify source identity, version, applicability, and support for each material
+              claim. Distinguish direct evidence from synthesis and report conflicts or missing
+              evidence. Follow the shared request, response, and handoff contract exactly. Do not
+              delegate further.
             '';
-            temperature = 0.7;
-            top_p = 0.8;
-            options.reasoningEffort = "none";
             permission = {
               edit = "deny";
               bash = "ask";
-              task = "deny";
-              todowrite = "deny";
-            };
-          };
-
-          long-context = {
-            mode = "subagent";
-            model = longContextModel;
-            variant = "long-context";
-            description = "Handles read-only investigations that exceed the local agents' practical context.";
-            prompt = ''
-              Investigate large local codebases, external documentation, and dependency source
-              when the task requires more context than the local subagents can reliably retain.
-              Synthesize findings across files and sources without modifying files or system state.
-              Prefer targeted reads over loading irrelevant content. Report concise conclusions
-              with exact file paths, relevant versions, source URLs, and explicit uncertainty.
-              Complete only the assigned investigation and do not delegate further.
-            '';
-            steps = 20;
-            permission = {
-              edit = "deny";
-              bash = "deny";
               task = "deny";
               todowrite = "deny";
             };
