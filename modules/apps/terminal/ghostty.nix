@@ -20,7 +20,7 @@
         font-family = "FiraCode Nerd Font Mono";
         font-size = 18;
 
-        theme = "mellow";
+        theme = "Mellow";
 
         shell-integration-features = "sudo,ssh-terminfo,ssh-env";
       };

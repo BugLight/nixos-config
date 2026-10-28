@@ -4,12 +4,14 @@
   ...
 }: {
   flake.modules.nixos.sway = {pkgs, ...}: {
+    environment.systemPackages = [pkgs.tuigreet];
+
     services.greetd = {
       enable = true;
 
       settings = rec {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd sway";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd sway";
           user = "greeter";
         };
       };
@@ -30,7 +32,11 @@
     home-manager.sharedModules = [inputs.self.modules.homeManager.sway];
   };
 
-  flake.modules.homeManager.sway = {config, pkgs, ...}: {
+  flake.modules.homeManager.sway = {
+    config,
+    pkgs,
+    ...
+  }: {
     wayland.windowManager.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
