@@ -6,7 +6,7 @@
 
     users.users.buglight = {
       isNormalUser = true;
-      extraGroups = ["networkmanager" "wheel" "video"];
+      extraGroups = ["networkmanager" "wheel" "video" "tss"];
       shell = pkgs.zsh;
     };
   };

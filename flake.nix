@@ -40,6 +40,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Secure Boot & Measured Boot for NixOS
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.2.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Other non-flake inputs
 
     powerlevel10k = {
@@ -48,6 +54,7 @@
     };
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;}
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;}
     (inputs.import-tree ./modules);
 }

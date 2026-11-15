@@ -9,8 +9,12 @@
       buglight
 
       # Features
+      secure-boot
       steam
       sway
+      tpm
     ];
+
+    custom.secureBoot.enable = true;
   };
 }
