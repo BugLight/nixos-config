@@ -18,8 +18,12 @@
       };
     };
 
-    terminal = {
-      package = pkgs.kitty;
-    };
+    # Install FiraCode Nerd Font
+    home.packages = [
+      pkgs.nerd-fonts.fira-code
+    ];
+    fonts.fontconfig.enable = true;
+
+    terminal.package = pkgs.kitty;
   };
 }
