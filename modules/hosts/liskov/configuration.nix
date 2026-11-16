@@ -2,6 +2,8 @@
   nixosConfigurations.liskov = {
     imports = with inputs.self.modules.nixos; [
       # Hardware
+      inputs.disko.nixosModules.disko
+      ./_disko.nix
       ./_hardware.nix
       nvidia
 
