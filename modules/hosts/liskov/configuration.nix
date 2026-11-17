@@ -5,16 +5,18 @@
       inputs.disko.nixosModules.disko
       ./_disko.nix
       ./_hardware.nix
+
       nvidia
+      tpm
 
       # Users
       buglight
 
       # Features
+      sops
       secure-boot
       steam
       sway
-      tpm
     ];
 
     # This value determines the NixOS release from which the default
