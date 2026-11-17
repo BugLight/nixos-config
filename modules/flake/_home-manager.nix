@@ -1,9 +1,8 @@
 {
-  config,
   inputs,
   lib,
   ...
-} @ top: {
+} @ top: {config, ...}: {
   imports = [
     inputs.home-manager.flakeModules.home-manager
   ];

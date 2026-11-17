@@ -2,9 +2,8 @@
   withSystem,
   inputs,
   lib,
-  config,
   ...
-}: {
+}: {config, ...}: {
   options.nixosConfigurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
