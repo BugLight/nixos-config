@@ -1,22 +1,24 @@
-{
+{nixpkgs}: {
+  config,
   withSystem,
   inputs,
   lib,
   ...
-}: {config, ...}: {
+}: {
   options.nixosConfigurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
   config.flake.nixosConfigurations = let
     mkNixosConfig = hostname: nixosConfig:
-      inputs.nixpkgs.lib.nixosSystem {
+      nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit hostname;
         };
         modules = [
           nixosConfig
           inputs.self.modules.nixos.base
+          inputs.self.modules.nixos.home-manager
           ({config, ...}: {
             # Use the configured pkgs from perSystem
             nixpkgs.pkgs = withSystem config.nixpkgs.hostPlatform.system (
