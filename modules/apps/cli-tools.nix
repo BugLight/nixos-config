@@ -1,5 +1,5 @@
 {withSystem, ...}: {
-  flake.modules.homeManager.base = {
+  flake.modules.homeManager.cli-tools = {
     pkgs,
     system,
     ...
@@ -42,7 +42,6 @@
 
       # productivity
       glow # markdown previewer in terminal
-      telegram-desktop
 
       btop # replacement of htop/nmon
       iftop # network monitoring

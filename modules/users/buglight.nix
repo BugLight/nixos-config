@@ -13,6 +13,9 @@
 
   buglight.homeManager.configurations.buglight = {
     imports = with inputs.self.modules.homeManager; [
+      cli
+      darwin-applications
+      desktop-tools
       firefox
       ghostty
       neovim
@@ -21,5 +24,10 @@
       tmux
       zsh
     ];
+
+    programs.git.settings.user = {
+      name = "Dani Zhukov";
+      email = "dmzhukov@outlook.com";
+    };
   };
 }

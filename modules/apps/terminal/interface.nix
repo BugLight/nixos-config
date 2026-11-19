@@ -1,5 +1,5 @@
 {lib, ...}: {
-  flake.modules.homeManager.base = {pkgs, ...}: {
+  flake.modules.homeManager.terminal-interface = {pkgs, ...}: {
     options.terminal = {
       package = lib.mkPackageOption pkgs "terminal" {
         default = ["foot"];
