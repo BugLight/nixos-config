@@ -3,6 +3,6 @@
     cli-tools
     firewall-disabled
     networkmanager
-    nix-maintenance
+    nix-garbage-collection
   ];
 }

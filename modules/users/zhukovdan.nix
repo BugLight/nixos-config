@@ -4,6 +4,7 @@
       firefox
       ghostty
       neovim
+      nix-garbage-collection
       opencode
       ssh
       tmux

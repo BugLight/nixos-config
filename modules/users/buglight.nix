@@ -16,6 +16,7 @@
       firefox
       ghostty
       neovim
+      nix-garbage-collection
       noctalia
       tmux
       zsh
