@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  nixosConfigurations.liskov = {
+  buglight.nixos.configurations.liskov = {
     imports = with inputs.self.modules.nixos; [
       # Hardware
       inputs.disko.nixosModules.disko

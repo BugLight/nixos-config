@@ -1,102 +1,62 @@
 {
+  homeManager,
+  nixpkgs,
+}: {
+  config,
   inputs,
   lib,
   ...
-} @ top: {config, ...}: {
+}: let
+  homeManagerConfigurations = config.buglight.homeManager.configurations;
+  homeManagerModules = config.buglight.homeManager.defaultModules;
+in {
   imports = [
-    inputs.home-manager.flakeModules.home-manager
+    homeManager.flakeModules.home-manager
   ];
 
-  options.homeConfigurations = lib.options.mkOption {
+  options.buglight.homeManager.configurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
-  config.flake.modules.homeManager.base = {
-    config,
-    pkgs,
-    system,
-    username,
-    ...
-  }: let
-    isDarwin = lib.strings.hasSuffix "darwin" system;
-  in {
-    home = {
-      # This value determines the home Manager release that your
-      # configuration is compatible with. This helps avoid breakage
-      # when a new home Manager release introduces backwards
-      # incompatible changes.
-      #
-      # You can update home Manager without changing this value. See
-      # the home Manager release notes for a list of state version
-      # changes in each release.
-      stateVersion = "24.11";
-
-      inherit username;
-      sessionPath = ["${config.home.profileDirectory}/bin"];
-      homeDirectory = let
-        homeDirectoryPrefix =
-          if isDarwin
-          then "/Users"
-          else "/home";
-      in "${homeDirectoryPrefix}/${username}";
-
-      # Sync applications folder on mac
-      activation.rsync-home-manager-applications =
-        if isDarwin
-        then
-          inputs.home-manager.lib.hm.dag.entryAfter ["writeBoundary"] ''
-            rsyncArgs="--archive --checksum --chmod=-w --copy-unsafe-links --delete"
-            apps_source="$genProfilePath/home-path/Applications"
-            moniker="Home Manager Trampolines"
-            app_target_base="${config.home.homeDirectory}/Applications"
-            app_target="$app_target_base/$moniker"
-            mkdir -p "$app_target"
-            ${pkgs.rsync}/bin/rsync $rsyncArgs "$apps_source/" "$app_target"
-          ''
-        else "";
-    };
-
-    # Let home Manager install and manage itself.
-    programs.home-manager.enable = true;
+  options.buglight.homeManager.defaultModules = lib.options.mkOption {
+    type = lib.types.listOf lib.types.deferredModule;
+    default = [];
   };
 
-  config.flake.modules.nixos.base = {config, ...}: let
+  config.flake.modules.nixos.home-manager = {config, ...}: let
     system = config.nixpkgs.hostPlatform.system;
-    homeConfigurations = top.config.homeConfigurations;
   in {
-    imports = [inputs.home-manager.nixosModules.home-manager];
+    imports = [homeManager.nixosModules.home-manager];
     home-manager.useGlobalPkgs = false;
     home-manager.useUserPackages = false;
     home-manager.extraSpecialArgs = {inherit system;};
     home-manager.users =
       lib.mapAttrs (username: _: {
         _module.args = {inherit username;};
-        imports = [
-          homeConfigurations.${username}
-          inputs.self.modules.homeManager.base
-        ];
+        imports =
+          [homeManagerConfigurations.${username}]
+          ++ homeManagerModules;
       })
-      (lib.filterAttrs (username: _: lib.hasAttr username homeConfigurations)
+      (lib.filterAttrs (username: _: lib.hasAttr username homeManagerConfigurations)
         config.users.users);
   };
 
   config.perSystem = {system, ...}: {
     legacyPackages.homeConfigurations = let
       mkHomeConfig = username: homeConfig:
-        inputs.home-manager.lib.homeManagerConfiguration
+        homeManager.lib.homeManagerConfiguration
         {
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          pkgs = nixpkgs.legacyPackages.${system};
 
           extraSpecialArgs = {
             inherit system username;
           };
 
-          modules = [
-            homeConfig
-            inputs.self.modules.homeManager.base
-          ];
+          modules =
+            [homeConfig]
+            ++ homeManagerModules;
         };
     in
-      lib.mapAttrs mkHomeConfig config.homeConfigurations;
+      lib.mapAttrs mkHomeConfig config.buglight.homeManager.configurations;
   };
 }
