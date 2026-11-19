@@ -24,8 +24,8 @@
   default = {inputs, ...}: {
     imports = [framework];
 
-    framework.nixosModules = [inputs.self.modules.nixos.base];
-    framework.homeManagerModules = [inputs.self.modules.homeManager.base];
+    framework.nixos.defaultModules = [inputs.self.modules.nixos.base];
+    framework.homeManager.defaultModules = [inputs.self.modules.homeManager.base];
 
     flake.modules.nixos.base.imports = [config.flake.modules.nixos.base];
     flake.modules.homeManager.base.imports = [config.flake.modules.homeManager.base];
@@ -38,8 +38,8 @@ in {
     ]
     ++ frameworkModules;
 
-  framework.nixosModules = [config.flake.modules.nixos.base];
-  framework.homeManagerModules = [config.flake.modules.homeManager.base];
+  framework.nixos.defaultModules = [config.flake.modules.nixos.base];
+  framework.homeManager.defaultModules = [config.flake.modules.homeManager.base];
 
   flake.flakeModules = {
     inherit default framework;

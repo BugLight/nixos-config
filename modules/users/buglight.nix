@@ -11,7 +11,7 @@
     };
   };
 
-  homeConfigurations.buglight = {
+  framework.homeManager.configurations.buglight = {
     imports = with inputs.self.modules.homeManager; [
       firefox
       ghostty

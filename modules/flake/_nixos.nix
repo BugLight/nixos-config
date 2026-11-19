@@ -5,12 +5,12 @@
   lib,
   ...
 }: {
-  options.framework.nixosModules = lib.options.mkOption {
+  options.framework.nixos.defaultModules = lib.options.mkOption {
     type = lib.types.listOf lib.types.deferredModule;
     default = [];
   };
 
-  options.nixosConfigurations = lib.options.mkOption {
+  options.framework.nixos.configurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
@@ -22,7 +22,7 @@
         };
         modules =
           [nixosConfig]
-          ++ config.framework.nixosModules
+          ++ config.framework.nixos.defaultModules
           ++ [
             inputs.self.modules.nixos.home-manager
             ({config, ...}: {
@@ -36,5 +36,5 @@
           ];
       };
   in
-    lib.mapAttrs mkNixosConfig config.nixosConfigurations;
+    lib.mapAttrs mkNixosConfig config.framework.nixos.configurations;
 }

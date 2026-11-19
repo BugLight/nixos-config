@@ -7,18 +7,18 @@
   lib,
   ...
 }: let
-  homeConfigurations = config.homeConfigurations;
-  homeManagerModules = config.framework.homeManagerModules;
+  homeManagerConfigurations = config.framework.homeManager.configurations;
+  homeManagerModules = config.framework.homeManager.defaultModules;
 in {
   imports = [
     homeManager.flakeModules.home-manager
   ];
 
-  options.homeConfigurations = lib.options.mkOption {
+  options.framework.homeManager.configurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
-  options.framework.homeManagerModules = lib.options.mkOption {
+  options.framework.homeManager.defaultModules = lib.options.mkOption {
     type = lib.types.listOf lib.types.deferredModule;
     default = [];
   };
@@ -34,10 +34,10 @@ in {
       lib.mapAttrs (username: _: {
         _module.args = {inherit username;};
         imports =
-          [homeConfigurations.${username}]
+          [homeManagerConfigurations.${username}]
           ++ homeManagerModules;
       })
-      (lib.filterAttrs (username: _: lib.hasAttr username homeConfigurations)
+      (lib.filterAttrs (username: _: lib.hasAttr username homeManagerConfigurations)
         config.users.users);
   };
 
@@ -57,6 +57,6 @@ in {
             ++ homeManagerModules;
         };
     in
-      lib.mapAttrs mkHomeConfig config.homeConfigurations;
+      lib.mapAttrs mkHomeConfig config.framework.homeManager.configurations;
   };
 }
