@@ -7,18 +7,18 @@
   lib,
   ...
 }: let
-  homeManagerConfigurations = config.framework.homeManager.configurations;
-  homeManagerModules = config.framework.homeManager.defaultModules;
+  homeManagerConfigurations = config.buglight.homeManager.configurations;
+  homeManagerModules = config.buglight.homeManager.defaultModules;
 in {
   imports = [
     homeManager.flakeModules.home-manager
   ];
 
-  options.framework.homeManager.configurations = lib.options.mkOption {
+  options.buglight.homeManager.configurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
-  options.framework.homeManager.defaultModules = lib.options.mkOption {
+  options.buglight.homeManager.defaultModules = lib.options.mkOption {
     type = lib.types.listOf lib.types.deferredModule;
     default = [];
   };
@@ -57,6 +57,6 @@ in {
             ++ homeManagerModules;
         };
     in
-      lib.mapAttrs mkHomeConfig config.framework.homeManager.configurations;
+      lib.mapAttrs mkHomeConfig config.buglight.homeManager.configurations;
   };
 }

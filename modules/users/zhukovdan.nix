@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  framework.homeManager.configurations.zhukovdan = {
+  buglight.homeManager.configurations.zhukovdan = {
     imports = with inputs.self.modules.homeManager; [
       firefox
       ghostty

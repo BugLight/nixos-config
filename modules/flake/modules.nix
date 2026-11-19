@@ -24,8 +24,8 @@
   default = {inputs, ...}: {
     imports = [framework];
 
-    framework.nixos.defaultModules = [inputs.self.modules.nixos.base];
-    framework.homeManager.defaultModules = [inputs.self.modules.homeManager.base];
+    buglight.nixos.defaultModules = [inputs.self.modules.nixos.base];
+    buglight.homeManager.defaultModules = [inputs.self.modules.homeManager.base];
 
     flake.modules.nixos.base.imports = [config.flake.modules.nixos.base];
     flake.modules.homeManager.base.imports = [config.flake.modules.homeManager.base];
@@ -38,8 +38,8 @@ in {
     ]
     ++ frameworkModules;
 
-  framework.nixos.defaultModules = [config.flake.modules.nixos.base];
-  framework.homeManager.defaultModules = [config.flake.modules.homeManager.base];
+  buglight.nixos.defaultModules = [config.flake.modules.nixos.base];
+  buglight.homeManager.defaultModules = [config.flake.modules.homeManager.base];
 
   flake.flakeModules = {
     inherit default framework;

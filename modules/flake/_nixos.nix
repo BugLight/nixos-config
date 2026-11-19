@@ -5,12 +5,12 @@
   lib,
   ...
 }: {
-  options.framework.nixos.defaultModules = lib.options.mkOption {
+  options.buglight.nixos.defaultModules = lib.options.mkOption {
     type = lib.types.listOf lib.types.deferredModule;
     default = [];
   };
 
-  options.framework.nixos.configurations = lib.options.mkOption {
+  options.buglight.nixos.configurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
   };
 
@@ -22,7 +22,7 @@
         };
         modules =
           [nixosConfig]
-          ++ config.framework.nixos.defaultModules
+          ++ config.buglight.nixos.defaultModules
           ++ [
             inputs.self.modules.nixos.home-manager
             ({config, ...}: {
@@ -36,5 +36,5 @@
           ];
       };
   in
-    lib.mapAttrs mkNixosConfig config.framework.nixos.configurations;
+    lib.mapAttrs mkNixosConfig config.buglight.nixos.configurations;
 }

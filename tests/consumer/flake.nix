@@ -17,8 +17,8 @@
 
       systems = ["x86_64-linux"];
 
-      framework.nixos.defaultModules = [inputs.self.modules.nixos.base];
-      framework.homeManager.defaultModules = [inputs.self.modules.homeManager.base];
+      buglight.nixos.defaultModules = [inputs.self.modules.nixos.base];
+      buglight.homeManager.defaultModules = [inputs.self.modules.homeManager.base];
 
       perSystem = {system, ...}: let
         consumerPkgs = import buglight.inputs.nixpkgs {
@@ -58,7 +58,7 @@
         home.sessionVariables.CONSUMER_HOME_BASE = "consumer";
       };
 
-      framework.homeManager.configurations.probe = {
+      buglight.homeManager.configurations.probe = {
         home = {
           username = "probe";
           homeDirectory = "/home/probe";
@@ -68,7 +68,7 @@
         home.sessionVariables.CONSUMER_HOME = "consumer";
       };
 
-      framework.nixos.configurations.probe = {pkgs, ...}: {
+      buglight.nixos.configurations.probe = {pkgs, ...}: {
         nixpkgs.hostPlatform = "x86_64-linux";
         system.stateVersion = "24.11";
         boot.isContainer = true;
