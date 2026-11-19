@@ -1,6 +1,5 @@
 {
-  flake.modules.nixos.base = {hostname, ...}: {
-    networking.hostName = hostname;
+  flake.modules.nixos.networkmanager = {
     networking.networkmanager.enable = true;
   };
 

@@ -17,6 +17,8 @@
       secure-boot
       steam
       sway
+      systemd-boot
+      workstation
     ];
 
     # This value determines the NixOS release from which the default

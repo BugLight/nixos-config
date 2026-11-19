@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.base = {pkgs, ...}: {
+  flake.modules.nixos.cli-tools = {pkgs, ...}: {
     environment.systemPackages = with pkgs; [
       # basic terminal tools
       vim

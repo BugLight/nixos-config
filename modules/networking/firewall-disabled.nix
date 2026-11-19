@@ -1,5 +1,5 @@
 {lib, ...}: {
-  flake.modules.nixos.base = {
+  flake.modules.nixos.firewall-disabled = {
     networking.firewall.enable = lib.mkDefault false;
   };
 }
