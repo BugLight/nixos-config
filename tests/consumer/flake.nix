@@ -12,10 +12,13 @@
     flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
       imports = [
         flake-parts.flakeModules.modules
-        buglight.flakeModules.default
+        buglight.flakeModules.framework
       ];
 
       systems = ["x86_64-linux"];
+
+      framework.nixosModules = [inputs.self.modules.nixos.base];
+      framework.homeManagerModules = [inputs.self.modules.homeManager.base];
 
       perSystem = {system, ...}: let
         consumerPkgs = import buglight.inputs.nixpkgs {
@@ -39,6 +42,7 @@
           assert builtins.attrNames nixosConfig.home-manager.users == ["probe"];
           assert nixosConfig.environment.sessionVariables.CONSUMER_NIXOS_BASE == "consumer";
           assert builtins.elem "consumer-marker" systemPackageNames;
+          assert !integratedHome.programs.git.enable;
           assert integratedHome.home.sessionVariables.CONSUMER_HOME == "consumer";
           assert integratedHome.home.sessionVariables.CONSUMER_HOME_BASE == "consumer";
           assert standaloneHome.home.sessionVariables.CONSUMER_HOME == "consumer";
@@ -55,6 +59,12 @@
       };
 
       homeConfigurations.probe = {
+        home = {
+          username = "probe";
+          homeDirectory = "/home/probe";
+          stateVersion = "24.11";
+        };
+
         home.sessionVariables.CONSUMER_HOME = "consumer";
       };
 

@@ -8,6 +8,7 @@
   ...
 }: let
   homeConfigurations = config.homeConfigurations;
+  homeManagerModules = config.framework.homeManagerModules;
 in {
   imports = [
     homeManager.flakeModules.home-manager
@@ -15,6 +16,11 @@ in {
 
   options.homeConfigurations = lib.options.mkOption {
     type = lib.types.lazyAttrsOf lib.types.deferredModule;
+  };
+
+  options.framework.homeManagerModules = lib.options.mkOption {
+    type = lib.types.listOf lib.types.deferredModule;
+    default = [];
   };
 
   config.flake.modules.nixos.home-manager = {config, ...}: let
@@ -27,10 +33,9 @@ in {
     home-manager.users =
       lib.mapAttrs (username: _: {
         _module.args = {inherit username;};
-        imports = [
-          homeConfigurations.${username}
-          inputs.self.modules.homeManager.base
-        ];
+        imports =
+          [homeConfigurations.${username}]
+          ++ homeManagerModules;
       })
       (lib.filterAttrs (username: _: lib.hasAttr username homeConfigurations)
         config.users.users);
@@ -47,10 +52,9 @@ in {
             inherit system username;
           };
 
-          modules = [
-            homeConfig
-            inputs.self.modules.homeManager.base
-          ];
+          modules =
+            [homeConfig]
+            ++ homeManagerModules;
         };
     in
       lib.mapAttrs mkHomeConfig config.homeConfigurations;
