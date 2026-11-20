@@ -3,13 +3,13 @@
     imports = with inputs.self.modules.homeManager; [
       cli
       darwin-applications
-      desktop-tools
       firefox
       ghostty
       neovim
       nix-garbage-collection
       opencode
       ssh
+      telegram
       tmux
       zsh
     ];
