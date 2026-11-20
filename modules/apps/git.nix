@@ -1,16 +1,12 @@
 {
-  flake.modules.homeManager.base = {
+  flake.modules.homeManager.git = {
     programs.git = {
       enable = true;
-      userName = "Dani Zhukov";
-      userEmail = "dmzhukov@outlook.com";
-
-      aliases = {
-        co = "checkout";
-        st = "status";
-      };
-
-      extraConfig = {
+      settings = {
+        alias = {
+          co = "checkout";
+          st = "status";
+        };
         checkout.defaultRemote = "origin";
         init.defaultBranch = "main";
         push.autoSetupRemote = true;

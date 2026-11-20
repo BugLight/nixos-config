@@ -13,13 +13,20 @@
 
   buglight.homeManager.configurations.buglight = {
     imports = with inputs.self.modules.homeManager; [
+      cli
       firefox
       ghostty
       neovim
       nix-garbage-collection
       noctalia
+      telegram
       tmux
       zsh
     ];
+
+    programs.git.settings.user = {
+      name = "Dani Zhukov";
+      email = "dmzhukov@outlook.com";
+    };
   };
 }
