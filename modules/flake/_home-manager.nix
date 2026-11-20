@@ -1,10 +1,8 @@
-{
-  homeManager,
-  nixpkgs,
-}: {
+{homeManager}: {
   config,
   inputs,
   lib,
+  withSystem,
   ...
 }: let
   homeManagerConfigurations = config.buglight.homeManager.configurations;
@@ -27,7 +25,7 @@ in {
     system = config.nixpkgs.hostPlatform.system;
   in {
     imports = [homeManager.nixosModules.home-manager];
-    home-manager.useGlobalPkgs = false;
+    home-manager.useGlobalPkgs = true;
     home-manager.useUserPackages = false;
     home-manager.extraSpecialArgs = {inherit system;};
     home-manager.users =
@@ -46,7 +44,7 @@ in {
       mkHomeConfig = username: homeConfig:
         homeManager.lib.homeManagerConfiguration
         {
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = withSystem system ({pkgs, ...}: pkgs);
 
           extraSpecialArgs = {
             inherit system username;

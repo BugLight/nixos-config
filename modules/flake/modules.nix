@@ -13,7 +13,6 @@
     })
     (lib.modules.importApply ./_home-manager.nix {
       homeManager = inputs.home-manager;
-      nixpkgs = inputs.nixpkgs;
     })
   ];
 
@@ -40,6 +39,7 @@ in {
 
   buglight.nixos.defaultModules = [config.flake.modules.nixos.base];
   buglight.homeManager.defaultModules = [config.flake.modules.homeManager.base];
+  buglight.nixpkgs.config.allowUnfree = true;
 
   flake.flakeModules = {
     inherit default framework;

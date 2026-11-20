@@ -9,7 +9,11 @@
     flake-parts,
     ...
   }:
-    flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
+    flake-parts.lib.mkFlake {inherit inputs;} ({
+      config,
+      lib,
+      ...
+    }: {
       imports = [
         flake-parts.flakeModules.modules
         buglight.flakeModules.framework
@@ -38,10 +42,15 @@
           integratedHome = nixosConfig.home-manager.users.probe;
           standaloneHome = inputs.self.legacyPackages.${system}.homeConfigurations.probe.config;
           systemPackageNames = map (package: package.name) nixosConfig.environment.systemPackages;
+          integratedHomePackageNames = map (package: package.name) integratedHome.home.packages;
+          standaloneHomePackageNames = map (package: package.name) standaloneHome.home.packages;
         in
+          assert config.buglight.nixpkgs.config == {};
           assert builtins.attrNames nixosConfig.home-manager.users == ["probe"];
           assert nixosConfig.environment.sessionVariables.CONSUMER_NIXOS_BASE == "consumer";
           assert builtins.elem "consumer-marker" systemPackageNames;
+          assert builtins.elem "consumer-marker" integratedHomePackageNames;
+          assert builtins.elem "consumer-marker" standaloneHomePackageNames;
           assert !integratedHome.programs.git.enable;
           assert integratedHome.home.sessionVariables.CONSUMER_HOME == "consumer";
           assert integratedHome.home.sessionVariables.CONSUMER_HOME_BASE == "consumer";
@@ -58,7 +67,7 @@
         home.sessionVariables.CONSUMER_HOME_BASE = "consumer";
       };
 
-      buglight.homeManager.configurations.probe = {
+      buglight.homeManager.configurations.probe = {pkgs, ...}: {
         home = {
           username = "probe";
           homeDirectory = "/home/probe";
@@ -66,6 +75,7 @@
         };
 
         home.sessionVariables.CONSUMER_HOME = "consumer";
+        home.packages = [pkgs.consumer-marker];
       };
 
       buglight.nixos.configurations.probe = {pkgs, ...}: {
