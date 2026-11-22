@@ -17,6 +17,9 @@
     programs.noctalia = {
       enable = true;
       settings = {
+        shell = {
+          polkit_agent = true;
+        };
         theme = {
           mode = "dark";
           source = "wallpaper";

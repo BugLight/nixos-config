@@ -1,11 +1,12 @@
 {inputs, ...}: {
-  buglight.nixos.configurations.liskov = {
+  buglight.nixos.configurations.liskov = {pkgs, ...}: {
     imports = with inputs.self.modules.nixos; [
       # Hardware
       inputs.disko.nixosModules.disko
       ./_disko.nix
       ./_hardware.nix
 
+      fingerprint
       nvidia
       tpm
 
@@ -46,5 +47,8 @@
     };
 
     custom.secureBoot.enable = true;
+
+    # Set fingerprint scanner driver for DELL
+    services.fprintd.tod.driver = pkgs.libfprint-2-tod1-broadcom;
   };
 }
