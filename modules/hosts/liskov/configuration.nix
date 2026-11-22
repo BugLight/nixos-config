@@ -13,6 +13,7 @@
       buglight
 
       # Features
+      media
       sops
       secure-boot
       steam
