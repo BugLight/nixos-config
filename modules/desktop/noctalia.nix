@@ -26,6 +26,17 @@
           enabled = true;
           default.path = ./sway/wallpaper.png;
         };
+        widget = {
+          battery = {
+            type = "battery";
+            device = "auto";
+          };
+
+          # Brightness and volume percentages are too easily confused with
+          # battery's ones
+          brightness.enabled = false;
+          volume.show_label = false;
+        };
       };
     };
 

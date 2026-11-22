@@ -14,6 +14,7 @@
 
       # Features
       media
+      power
       sops
       secure-boot
       steam
