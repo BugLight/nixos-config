@@ -16,6 +16,7 @@
       cli
       firefox
       ghostty
+      flatpak
       neovim
       nix-garbage-collection
       noctalia
@@ -23,6 +24,8 @@
       tmux
       zsh
     ];
+
+    services.flatpak.packages = ["app.xmcl.voxelum"];
 
     programs.git.settings.user = {
       name = "Dani Zhukov";

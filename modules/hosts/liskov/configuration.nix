@@ -14,6 +14,7 @@
       buglight
 
       # Features
+      flatpak
       media
       power
       sops
