@@ -6,6 +6,7 @@
       ./_disko.nix
       ./_hardware.nix
 
+      bluetooth
       fingerprint
       nvidia
       tpm
